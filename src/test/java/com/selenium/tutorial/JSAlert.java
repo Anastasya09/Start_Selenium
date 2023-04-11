@@ -11,40 +11,34 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-
 public class JSAlert {
+
     @Test
     public void validateAlerts() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
 
         WebDriver driver = new ChromeDriver();
 
-        driver.get("https://www.w3schools.com/bootstrap/bootstrap_modal.asp");
+        driver.get("https://the-internet.herokuapp.com/javascript_alerts");
 
-
-        String currentWindow = driver.getWindowHandle();
-
-        driver.findElement(By.cssSelector("button[data-toggle='modal']")).click();
-
-        Thread.sleep(1000);
-
-        WebElement modal = driver.findElement(By.className("modal-content"));
-
-        for (String windowName : driver.getWindowHandles()) {
-            if(!windowName.equals(currentWindow)) {
-                driver.switchTo().window(windowName);
-                break;
-            }
+        List<WebElement> buttons = driver.findElements(By.tagName("button"));
+        if (buttons.size() == 3) {
+            buttons.get(2).click();
+            Thread.sleep(1000);
         }
 
-//        modal.findElement(By.cssSelector("button[data-toggle='modal']")).click();
-        modal.findElement(By.xpath("(//button[@data-dismiss='modal'])[2]")).click();
-        Thread.sleep(1000);
+        Alert alert = driver.switchTo().alert();
 
-        driver.switchTo().window(currentWindow);
+        String actualText = alert.getText();
+        System.out.println(alert.getText());
+
+        alert.sendKeys("Hello there!");
+        Thread.sleep(2000);
+        alert.accept();
+        Thread.sleep(4000);
 
         driver.quit();
 
-
+        assertEquals("Alert text not as expected", "I am a JS prompt", actualText);
     }
 }
